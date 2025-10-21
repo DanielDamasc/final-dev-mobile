@@ -1,8 +1,9 @@
+import 'package:final_mobile/data/model/user.dart';
 import 'package:final_mobile/login.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
-  final Map<String, String> user;
+  final User user;
   const Profile({super.key, required this.user});
 
   @override
@@ -38,7 +39,7 @@ class ProfileState extends State<Profile> {
                         spacing: 4,
                         children: [
                           Text(
-                            widget.user["name"].toString(),
+                            widget.user.name,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.white,
@@ -46,7 +47,7 @@ class ProfileState extends State<Profile> {
                             ),
                           ),
                           Text(
-                            widget.user["email"].toString(),
+                            widget.user.email,
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ],
@@ -77,23 +78,26 @@ class ProfileState extends State<Profile> {
                 ],
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.deepPurpleAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.deepPurpleAccent),
+            Container(
+              margin: EdgeInsets.only(bottom: 40),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.deepPurpleAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.deepPurpleAccent),
+                  ),
                 ),
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                    (route) => false,
+                  );
+                },
+                child: Text("Logout", style: TextStyle(fontSize: 18)),
               ),
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                  (route) => false,
-                );
-              },
-              child: Text("Logout", style: TextStyle(fontSize: 18)),
             ),
           ],
         ),

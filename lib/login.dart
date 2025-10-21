@@ -1,4 +1,4 @@
-import 'package:final_mobile/data/users.dart';
+import 'package:final_mobile/data/model/user.dart';
 import 'package:final_mobile/home.dart';
 import 'package:flutter/material.dart';
 
@@ -30,8 +30,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> credenciais = users;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -40,97 +38,93 @@ class _LoginState extends State<Login> {
         appBar: AppBar(
           title: Text("Games.io", style: TextStyle(color: Colors.white)),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 10, 10, 10),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 40.0),
-          child: Column(
-            spacing: 60,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Olá, seja bem-vindo ao Games.io",
-                style: TextStyle(fontSize: 32, color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-              Column(
-                spacing: 20,
-                children: [
-                  Text(
-                    "Faça seu Login",
-                    style: TextStyle(fontSize: 20, color: Colors.grey),
-                  ),
-                  TextField(
-                    style: TextStyle(color: Colors.white),
-                    controller: emailCtrl,
-                    decoration: InputDecoration(
-                      hintText: 'E-mail',
-                      hintStyle: TextStyle(color: Colors.deepPurple),
+        body: SingleChildScrollView(
+          child: Container(
+            constraints: BoxConstraints(
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  (kToolbarHeight + MediaQuery.of(context).padding.top),
+            ),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 10, 10, 10),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 40.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Olá, seja bem-vindo ao Games.io",
+                  style: TextStyle(fontSize: 32, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+
+                SizedBox(height: 60),
+
+                Column(
+                  spacing: 20,
+                  children: [
+                    Text(
+                      "Faça seu Login",
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
                     ),
-                  ),
-                  TextField(
-                    style: TextStyle(color: Colors.white),
-                    controller: senhaCtrl,
-                    obscureText: escondeSenha,
-                    decoration: InputDecoration(
-                      hintText: 'Senha',
-                      hintStyle: TextStyle(color: Colors.deepPurple),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            escondeSenha = !escondeSenha;
-                          });
-                        },
-                        icon: Icon(Icons.visibility),
+                    TextField(
+                      style: TextStyle(color: Colors.white),
+                      controller: emailCtrl,
+                      decoration: InputDecoration(
+                        hintText: 'E-mail',
+                        hintStyle: TextStyle(color: Colors.deepPurple),
                       ),
                     ),
-                  ),
-
-                  Text(erro, style: TextStyle(color: Colors.red)),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurpleAccent,
-                      foregroundColor: Colors.white,
+                    TextField(
+                      style: TextStyle(color: Colors.white),
+                      controller: senhaCtrl,
+                      obscureText: escondeSenha,
+                      decoration: InputDecoration(
+                        hintText: 'Senha',
+                        hintStyle: TextStyle(color: Colors.deepPurple),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              escondeSenha = !escondeSenha;
+                            });
+                          },
+                          icon: Icon(Icons.visibility),
+                        ),
+                      ),
                     ),
 
-                    onPressed: () {
-                      String email = emailCtrl.text.trim();
-                      String senha = senhaCtrl.text.trim();
+                    Text(erro, style: TextStyle(color: Colors.red)),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurpleAccent,
+                        foregroundColor: Colors.white,
+                      ),
 
-                      final usuario = credenciais.firstWhere(
-                        (user) => user["email"] == email,
-                        orElse: () => {},
-                      );
+                      onPressed: () async {
+                        String email = emailCtrl.text;
+                        String senha = senhaCtrl.text;
 
-                      if (usuario.isNotEmpty) {
-                        if (senha == usuario["password"]) {
-                          setState(() {
-                            erro = '';
-                          });
+                        User? user = await User.login(email, senha);
+
+                        if (user != null) {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Home(user: usuario),
+                              builder: (context) => Home(user: user),
                             ),
                           );
                         } else {
                           setState(() {
-                            erro = 'Senha incorreta';
+                            erro = 'E-mail ou senha inválidos.';
                           });
                         }
-                      } else {
-                        setState(() {
-                          erro = 'Email incorreto';
-                        });
-                      }
-                    },
-
-                    child: Text("Login"),
-                  ),
-                ],
-              ),
-            ],
+                      },
+                      child: Text("Login"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

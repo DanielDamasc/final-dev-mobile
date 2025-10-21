@@ -1,8 +1,6 @@
 import 'package:final_mobile/details.dart';
 import 'package:final_mobile/favs.dart';
-import 'package:final_mobile/home.dart';
 import 'package:final_mobile/login.dart';
-import 'package:final_mobile/profile.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -26,9 +24,7 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const Login(),
-        '/home': (context) => const Home(user: {}),
         '/datails': (context) => const Details(game: {}),
-        '/profile': (context) => const Profile(user: {}),
         '/favs': (context) => const Favs(),
       },
     );

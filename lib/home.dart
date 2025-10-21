@@ -1,10 +1,11 @@
 import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/data/games.dart';
+import 'package:final_mobile/data/model/user.dart';
 import 'package:final_mobile/profile.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  final Map<String, String> user;
+  final User user;
   const Home({super.key, required this.user});
 
   @override
