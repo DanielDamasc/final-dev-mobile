@@ -1,10 +1,8 @@
-import 'package:final_mobile/data/model/user.dart';
 import 'package:final_mobile/login.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
-  final User user;
-  const Profile({super.key, required this.user});
+  const Profile({super.key});
 
   @override
   State<Profile> createState() => ProfileState();
@@ -38,18 +36,18 @@ class ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 4,
                         children: [
-                          Text(
-                            widget.user.name,
-                            style: TextStyle(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            widget.user.email,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
+                          // Text(
+                          //   widget.user.name,
+                          //   style: TextStyle(
+                          //     fontSize: 24,
+                          //     color: Colors.white,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
+                          // Text(
+                          //   widget.user.email,
+                          //   style: TextStyle(fontSize: 16, color: Colors.white),
+                          // ),
                         ],
                       ),
                     ],
