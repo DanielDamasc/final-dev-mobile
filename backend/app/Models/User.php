@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -16,8 +18,13 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'foto',
         'email',
         'password',
+    ];
+
+    protected $appends = [
+        'foto_url'
     ];
 
     /**
@@ -41,5 +48,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected function fotoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function (): mixed {
+                $path = $this->foto;
+
+                if ($path && Storage::disk('public')->exists($path)) {
+                    return Storage::disk('public')->url($path);
+                }
+
+                return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random';
+            }
+        );
     }
 }
