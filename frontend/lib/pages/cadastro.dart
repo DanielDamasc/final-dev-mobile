@@ -121,7 +121,7 @@ class _RegisterState extends State<Register> {
               children: [
                 Text(
                   "Crie sua Conta",
-                  style: TextStyle(fontSize: 24, color: Colors.grey),
+                  style: TextStyle(fontSize: 28, color: Colors.purple),
                 ),
 
                 SizedBox(height: 20),

@@ -1,5 +1,6 @@
 import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/data/games.dart';
+import 'package:final_mobile/pages/game_register.dart';
 import 'package:final_mobile/pages/profile.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +52,17 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => GameRegister()),
+          );
+        },
+        backgroundColor: Colors.purple,
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
