@@ -1,4 +1,5 @@
-import 'package:final_mobile/home.dart';
+import 'package:final_mobile/pages/cadastro.dart';
+import 'package:final_mobile/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -105,14 +106,18 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
+
       child: Scaffold(
+
         appBar: AppBar(
           title: Text("Games.io", style: TextStyle(color: Colors.white)),
         ),
+
         body: SingleChildScrollView(
           child: Container(
             constraints: BoxConstraints(
@@ -121,7 +126,7 @@ class _LoginState extends State<Login> {
                   (kToolbarHeight + MediaQuery.of(context).padding.top),
             ),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 10, 10, 10),
+              color: Color.fromARGB(255, 10, 10, 10),
             ),
             padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Column(
@@ -133,15 +138,17 @@ class _LoginState extends State<Login> {
                   textAlign: TextAlign.center,
                 ),
 
-                SizedBox(height: 60),
+                SizedBox(height: 20),
+
+                Text(
+                  "Faça seu Login",
+                  style: TextStyle(fontSize: 24, color: Colors.grey),
+                ),
+
+                SizedBox(height: 20),
 
                 Column(
-                  spacing: 20,
                   children: [
-                    Text(
-                      "Faça seu Login",
-                      style: TextStyle(fontSize: 20, color: Colors.grey),
-                    ),
                     TextField(
                       style: TextStyle(color: Colors.white),
                       controller: emailCtrl,
@@ -150,6 +157,9 @@ class _LoginState extends State<Login> {
                         hintStyle: TextStyle(color: Colors.deepPurple),
                       ),
                     ),
+
+                    SizedBox(height: 20),
+
                     TextField(
                       style: TextStyle(color: Colors.white),
                       controller: senhaCtrl,
@@ -163,22 +173,63 @@ class _LoginState extends State<Login> {
                               escondeSenha = !escondeSenha;
                             });
                           },
-                          icon: Icon(Icons.visibility),
+
+                          icon: Icon(
+                            escondeSenha ? Icons.visibility_off : Icons.visibility,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
 
-                    Text(errorMessage, style: TextStyle(color: Colors.red)),
+                    SizedBox(height: 20),
+
+                    if (errorMessage.isNotEmpty)
+                      Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurpleAccent,
                         foregroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 50),
                       ),
 
                       onPressed: isLoading ? null : login,
                       child: isLoading
                           ? CircularProgressIndicator(color: Colors.white,)
                           : Text('Login'),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => const Register() 
+                          ),
+                        );
+                      }, 
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Não tem uma conta? ',
+                          style: TextStyle(color: Colors.grey),
+                          children: [
+                            TextSpan(
+                              text: 'Cadastre-se',
+                              style: TextStyle(
+                                color: Colors.deepPurpleAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

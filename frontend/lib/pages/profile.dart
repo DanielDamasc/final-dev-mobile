@@ -1,4 +1,4 @@
-import 'package:final_mobile/login.dart';
+import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {

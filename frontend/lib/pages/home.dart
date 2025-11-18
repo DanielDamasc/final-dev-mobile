@@ -1,6 +1,6 @@
 import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/data/games.dart';
-import 'package:final_mobile/profile.dart';
+import 'package:final_mobile/pages/profile.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {

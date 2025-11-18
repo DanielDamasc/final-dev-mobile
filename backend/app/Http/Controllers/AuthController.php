@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,14 +42,14 @@ class AuthController extends Controller
 
             DB::beginTransaction();
 
-            $caminho = null;
-            if ($request->hasFile('foto')) {
-                $caminho = $request->file('foto')->store('fotos', 'public');
-            }
+            // $caminho = null;
+            // if ($request->hasFile('foto')) {
+            //     $caminho = $request->file('foto')->store('fotos', 'public');
+            // }
 
             $user = User::create([
                 'name' => $request->name,
-                'foto' => $caminho,
+                // 'foto' => $caminho,
                 'email' => $request->email,
                 'password'=> Hash::make($request->password),
             ]);

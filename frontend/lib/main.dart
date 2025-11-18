@@ -1,6 +1,6 @@
-import 'package:final_mobile/details.dart';
-import 'package:final_mobile/favs.dart';
-import 'package:final_mobile/login.dart';
+import 'package:final_mobile/pages/details.dart';
+import 'package:final_mobile/pages/favs.dart';
+import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
