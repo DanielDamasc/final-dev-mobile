@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GamesController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class,'logout']);
 
     Route::post('gameRegister', [GamesController::class, 'create']);
-
     Route::get('games', [GamesController::class, 'index']);
+
+    Route::get('user', [UserController::class, 'index']);
+    Route::delete('user/delete', [UserController::class, 'deleteAccount']);
 });
