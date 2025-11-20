@@ -14,7 +14,12 @@ class GamesController extends Controller
      */
     public function index()
     {
-        $games = Games::with('genres')->orderBy("name", "asc")->get();
+        $authUser = auth()->user();
+
+        $games = Games::with('genres')
+                ->whereAttachedTo($authUser, 'users')
+                ->orderBy("name", "asc")
+                ->get();
 
         $data = $games->map(function($game) {
             $genreNames = $game->genres->map(function($genre) {
@@ -42,23 +47,31 @@ class GamesController extends Controller
     {
         $games = $request->validated();
 
+        $authUser = $request->user();
+
         DB::beginTransaction();
 
         try {
-
-            $game = Games::create([
-                'rawg_id' => $games['rawg_id'],
-                'name' => $games['name'],
-                'description' => $games['description'],
-                'background_image' => $games['background_image'],
-                'released' => $games['released'],
-            ]);
+            // firstOrCreate porque o game já pode ter sido adicionado por outro user.
+            $game = Games::firstOrCreate(
+    ['rawg_id' => $games['rawg_id']],
+        [
+                    'rawg_id' => $games['rawg_id'],
+                    'name' => $games['name'],
+                    'description' => $games['description'],
+                    'background_image' => $games['background_image'],
+                    'released' => $games['released']
+                ]
+            );
 
             $genresIds = collect($games['genres'])->map(function ($genreName) {
                 return Genres::firstOrCreate(['name' => $genreName])->id;
             });
 
             $game->genres()->sync($genresIds);
+
+            // Relaciona o usuário autenticado com o game que ele adicionou.
+            $authUser->games()->attach($game->rawg_id);
 
             DB::commit();
 

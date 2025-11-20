@@ -135,10 +135,16 @@ class _HomeState extends State<Home> {
             final List<Map<String, dynamic>> fetchedGames = snapshot.data!;
 
             if (fetchedGames.isEmpty) {
-              return Center(
-                child: Text(
-                  "Nenhum jogo encontrado.",
-                  style: TextStyle(color: Colors.grey)),
+              return Container(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                color: const Color.fromARGB(255, 10, 10, 10),
+                child: Center(
+                  child: Text(
+                    "Nenhum jogo encontrado.",
+                    style: TextStyle(color: Colors.grey, fontSize: 16)),
+                ),
               );
             }
 
