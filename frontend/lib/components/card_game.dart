@@ -1,131 +1,152 @@
-import 'package:final_mobile/pages/details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class Cardgame extends StatefulWidget {
-  final Map<String, Object> game;
-  const Cardgame({super.key, required this.game});
+class Cardgame extends StatelessWidget {
 
-  @override
-  State<Cardgame> createState() => _CardgameState();
-}
+  final Map<String, dynamic> game;
 
-class _CardgameState extends State<Cardgame> {
+  const Cardgame({
+    super.key,
+    required this.game,
+  });
+
   @override
   Widget build(BuildContext context) {
-    bool fav = widget.game["fav"] as bool;
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        color: const Color.fromARGB(255, 30, 30, 30),
-      ),
-      padding: EdgeInsets.all(20),
+    final String name = game['name'] ?? 'Nome Desconhecido';
+    final String imageUrl = game['background_image'] ?? '';
+    final String released = game['released'] ?? 'N/A';
+    final List<String> genres = List<String>.from(game['genres'] ?? []); 
 
-      child: Column(
-        spacing: 8,
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      // onTap: () {},
 
-        children: [
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(12),
-              child: Image.asset(
-                'assets/images/${widget.game["imagem"].toString()}',
-                width: 320,
-                height: 280,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 30, 30, 30),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              child: Image.network(
+                imageUrl,
+                height: 180,
+                width: double.infinity,
                 fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  widget.game["nome"].toString(),
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              RatingBar.builder(
-                initialRating: fav == true ? 1 : 0,
-                minRating: 0,
-                direction: Axis.horizontal,
-                itemCount: 1,
-                itemSize: 32,
-                unratedColor: Colors.grey,
-                itemBuilder: (context, _) =>
-                    Icon(Icons.star, color: Colors.purpleAccent),
-                onRatingUpdate: (rating) {
-                  setState(() {
-                    rating == 1.0
-                        ? widget.game["fav"] = true
-                        : widget.game["fav"] = false;
-                  });
-                },
-              ),
-            ],
-          ),
-
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Desenvolvedor: ${widget.game["desenvolvedor"].toString()}",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              Text(
-                "Gênero: ${widget.game["genero"].toString()}",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.deepPurpleAccent),
-                  ),
-                  fixedSize: Size(160, 40),
-                ),
-                onPressed: () async {
-                  final res = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Details(game: widget.game),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Container(
+                    height: 180,
+                    color: Colors.grey,
+                    child: Center(
+                      child: CircularProgressIndicator(color: Colors.deepPurple),
                     ),
                   );
-                  if (res != null) {
-                    setState(() {
-                      widget.game["fav"] = res;
-                    });
-                  }
                 },
-                child: Text("Ver Detalhes", style: TextStyle(fontSize: 18)),
               ),
-            ],
-          ),
-        ],
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Lançamento: $released',
+                              style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 40.0,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurpleAccent,
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(8.0))
+                            ),
+                            child: Icon(Icons.info, color: Colors.white, size: 24)
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 8),
+
+                      SizedBox(
+                        height: 40.0,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(8.0))
+                            ),
+                            child: Icon(Icons.delete, color: Colors.white, size: 24)
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+                  
+                  Text(
+                    'Gêneros:',
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                  ),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 8.0, 
+                    runSpacing: 4.0, 
+                    children: genres.map((genre) {
+                      return Chip(
+                        backgroundColor: Colors.deepPurple,
+                        label: Text(
+                          genre,
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

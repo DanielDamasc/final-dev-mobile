@@ -15,4 +15,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class,'logout']);
 
     Route::post('gameRegister', [GamesController::class, 'create']);
+
+    Route::get('games', [GamesController::class, 'index']);
 });

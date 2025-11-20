@@ -14,7 +14,25 @@ class GamesController extends Controller
      */
     public function index()
     {
-        //
+        $games = Games::with('genres')->orderBy("name", "asc")->get();
+
+        $data = $games->map(function($game) {
+            $genreNames = $game->genres->map(function($genre) {
+                return $genre->name;
+            });
+
+            return [
+                "id" => $game->rawg_id,
+                "name" => $game->name,
+                "background_image" => $game->background_image,
+                "released" => $game->released,
+                "genres" => $genreNames
+            ];
+        });
+
+        return response()->json(
+            $data
+        , 200);
     }
 
     /**
@@ -23,7 +41,7 @@ class GamesController extends Controller
     public function create(GameRegisterRequest $request)
     {
         $games = $request->validated();
-        
+
         DB::beginTransaction();
 
         try {
