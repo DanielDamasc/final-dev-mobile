@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/pages/game_register.dart';
 import 'package:final_mobile/pages/login.dart';
+import 'package:final_mobile/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -34,18 +35,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _showSnackbar(String message, Color color) {
-    if (message.isNotEmpty && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: color,
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
-  }
-
   Future<List<Map<String, dynamic>>?> _getGames() async {
 
     String? token = await storage.read(key: TOKEN_KEY);
@@ -71,11 +60,9 @@ class _HomeState extends State<Home> {
         return fetchedGames;
       }
 
-      _showSnackbar("Erro: Código ${res.statusCode}", Colors.red);
       throw Exception("Erro: Código ${res.statusCode}");
 
     } on DioException catch (e) {
-      _showSnackbar("Erro de conexão", Colors.red);
       throw Exception("Erro de conexão");
     }
   }
@@ -108,7 +95,17 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("Home", style: TextStyle(color: Colors.white)),
-
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(builder: (context) => Profile())
+              );
+            }, 
+            icon: Icon(Icons.person, color: Colors.white)
+          )
+        ],
       ),
 
       body: FutureBuilder<List<Map<String, dynamic>>?> (
