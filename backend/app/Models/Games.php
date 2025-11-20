@@ -11,7 +11,10 @@ class Games extends Model
     /** @use HasFactory<\Database\Factories\GamesFactory> */
     use HasFactory;
 
+    protected $primaryKey = "rawg_id";
+
     protected $fillable = [
+        "rawg_id",
         "name",
         "description",
         "background_image",

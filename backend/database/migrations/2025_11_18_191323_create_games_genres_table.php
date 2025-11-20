@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('games_genres', function (Blueprint $table) {
 
-            $table->foreignId('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->foreignId('game_id')->references('rawg_id')->on('games')->onDelete('cascade');
             $table->foreignId('genre_id')->references('id')->on('genres')->onDelete('cascade');
 
             $table->primary(['game_id', 'genre_id']);

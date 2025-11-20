@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('games', function (Blueprint $table) {
-            $table->id()->primary();
+
+            $table->id('rawg_id')->primary();
 
             $table->string('name');
             $table->text('description');
