@@ -88,6 +88,15 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Key _futureBuilderKey = UniqueKey();
+
+  void _reloadGames() {
+    setState(() {
+      // Altera a key do FutureBuilder, que força o builder a ser executado novamente.
+      _futureBuilderKey = UniqueKey();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -109,6 +118,7 @@ class _HomeState extends State<Home> {
       ),
 
       body: FutureBuilder<List<Map<String, dynamic>>?> (
+        key: _futureBuilderKey,
         future: _getGames(), 
         builder: (context, snapshot) {
           
@@ -156,7 +166,10 @@ class _HomeState extends State<Home> {
                   children: [
                     ...fetchedGames.map((game) => Column(
                       children: [
-                        Cardgame(game: game),
+                        Cardgame(
+                          game: game,
+                          onDeleteSuccess: _reloadGames,  
+                        ),
                         SizedBox(height: 24),
                       ],
                     )).toList(),

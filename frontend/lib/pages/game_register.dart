@@ -157,7 +157,6 @@ class _GameRegisterState extends State<GameRegister> {
 
     // Recebe o token.
     final token = await getToken();
-    print(token);
 
     // Mensagem da SnackBar.
     String msg;
@@ -218,7 +217,6 @@ class _GameRegisterState extends State<GameRegister> {
       }
 
     } on DioException catch (e) {
-      print(e);
       _showSnackbar("Erro de conexão", Colors.red);
 
     } finally {

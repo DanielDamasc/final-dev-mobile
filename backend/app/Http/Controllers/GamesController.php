@@ -6,6 +6,7 @@ use App\Http\Requests\GameRegisterRequest;
 use App\Models\Games;
 use App\Models\Genres;
 use DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class GamesController extends Controller
 {
@@ -124,8 +125,32 @@ class GamesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Games $games)
+    public function destroy(int $gameId)
     {
-        //
+        $user = auth()->user();
+
+        try {
+            $game = Games::findOrFail($gameId);
+            $rows = $game->users()->detach($user->id);
+
+            if ($rows == 0) {
+                return response()->json([
+                    "message" => "ID $gameId não encontrado."
+                ], 404);
+            }
+
+            return response()->noContent();
+
+        } catch (ModelNotFoundException $e) {
+            // findOrFail cai aqui.
+            return response()->json([
+                "message" => "Jogo com ID $gameId não encontrado."
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Erro de conexão."
+            ], 500);
+        }
     }
 }

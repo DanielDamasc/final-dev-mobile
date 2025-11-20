@@ -1,4 +1,3 @@
-import 'package:final_mobile/data/games.dart';
 import 'package:flutter/material.dart';
 
 class Favs extends StatefulWidget {
@@ -11,14 +10,7 @@ class Favs extends StatefulWidget {
 class _FavsState extends State<Favs> {
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, Object>> dados = games;
     final List<Map<String, Object>> favs = [];
-
-    for (var data in dados) {
-      if (data["fav"] == true) {
-        favs.add(data);
-      }
-    }
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 10, 10, 10),
