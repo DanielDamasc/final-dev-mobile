@@ -3,6 +3,7 @@ import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/pages/game_register.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:final_mobile/pages/profile.dart';
+import 'package:final_mobile/pages/ranking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -216,17 +217,39 @@ class _HomeState extends State<Home> {
         }
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => GameRegister()),
-          );
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'btn-ranking',
+            onPressed: () async {
+              await Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => Ranking()),
+              );
+          
+              _reloadGames();
+            },
+            backgroundColor: Colors.blueGrey,
+            child: Icon(Icons.leaderboard, color: Colors.white),
+          ),
 
-          _reloadGames();
-        },
-        backgroundColor: Colors.green,
-        child: Icon(Icons.add, color: Colors.white),
+          SizedBox(height: 8.0),
+
+          FloatingActionButton(
+            heroTag: 'btn-register',
+            onPressed: () async {
+              await Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => GameRegister()),
+              );
+          
+              _reloadGames();
+            },
+            backgroundColor: Colors.green,
+            child: Icon(Icons.add, color: Colors.white),
+          ),
+        ],
       ),
     );
   }

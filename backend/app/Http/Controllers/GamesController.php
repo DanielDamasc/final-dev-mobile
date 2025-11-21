@@ -210,4 +210,54 @@ class GamesController extends Controller
             ], 500);
         }
     }
+
+    public function ranking()
+    {
+        $user = auth()->user();
+
+        try {
+
+            $games = Games::whereAttachedTo($user, 'users')
+                ->with(['users' => function ($query) use ($user) {
+                    $query->where('id', $user->id);
+                }])
+                ->get()
+                ->map(function($game) {
+
+                    $game->setRelation('users', $game->users->first());
+                    return $game;
+                });
+
+            if ($games->isEmpty()) {
+                return response()->json([
+                    "message" => "Não foram encontrados jogos para o usuário."
+                ], 404);
+            }
+
+            $gameData = $games->map(function ($game) {
+                return [
+                    "name" => $game->name,
+                    "rating" => $game->users->pivot->rating,
+                ];
+            });
+
+            $gameDataSorted = $gameData->sortByDesc('rating')->values();
+
+            $rank = $gameDataSorted->map(function ($item, $key) {
+                return [
+                    "position" => $key + 1,
+                    "name" => $item['name'],
+                    "rating" => (double) $item['rating'],
+                ];
+            });
+
+            return response()->json($rank, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Erro de conexão"
+            ], 500);
+        }
+
+    }
 }

@@ -254,6 +254,8 @@ class _GameRegisterState extends State<GameRegister> {
     super.dispose();
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,7 +272,7 @@ class _GameRegisterState extends State<GameRegister> {
         color: const Color.fromARGB(255, 10, 10, 10),
         padding: EdgeInsets.all(20),
         child: Form(
-          // key: _formKey,
+          key: _formKey,
           child: ListView(
             children: [
               TextFormField(
