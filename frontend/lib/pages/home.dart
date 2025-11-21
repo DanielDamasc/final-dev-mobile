@@ -139,8 +139,14 @@ class _HomeState extends State<Home> {
         builder: (context, snapshot) {
           
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            return Container(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              color: const Color.fromARGB(255, 10, 10, 10),
+              child: Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             );
           }
 
