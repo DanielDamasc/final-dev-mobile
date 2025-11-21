@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('game_id')->references('rawg_id')->on('games')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->boolean('favorite')->default(false);
+            $table->decimal('rating')->default(0.0);
 
             $table->primary(['game_id', 'user_id']);
 

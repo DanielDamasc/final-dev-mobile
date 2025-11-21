@@ -115,7 +115,7 @@ class GamesController extends Controller
                 ->firstOrFail();
 
             // Consegue acessar o atributo diretamente por ter carregado a relação antes.
-            $favorite = $game->users->first()->pivot->rating;
+            $rating = $game->users->first()->pivot->rating;
 
             $genreData = $game->genres->map(function ($genre) {
                 return $genre->name;
@@ -127,7 +127,7 @@ class GamesController extends Controller
                 'description' => $game->description,
                 'background_image' => $game->background_image,
                 'released' => $game->released,
-                'favorite' => $favorite,
+                'rating' => (double) $rating,
                 'genres' => $genreData
             ];
 
@@ -157,9 +157,26 @@ class GamesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update()
+    public function update(int $gameId, float $rating)
     {
-        //
+        $user = auth()->user();
+
+        try {
+            $game = Games::with(['users' => function ($query) use ($user) {
+                $query->where('id', $user->id);
+            }])
+                ->where('rawg_id', $gameId)
+                ->firstOrFail();
+
+            $game->users()->updateExistingPivot($user->id, ['rating' => $rating]);
+
+            return response()->noContent();
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Erro de conexão"
+            ], 500);
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ class DetailsState extends State<Details> {
   final dio = Dio();
   final storage = FlutterSecureStorage();
   final String TOKEN_KEY = 'auth_token';
+  double? gameScore;
 
   Future<String?> getToken() async {
     try {
@@ -69,6 +70,82 @@ class DetailsState extends State<Details> {
     }
   }
 
+  Future<void> _onRating(double rating, int gameId) async {
+
+    final bool? updateRating = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color.fromRGBO(50, 50, 50, 1),
+          title: const Text('Avaliar Jogo', style: TextStyle(color: Colors.white)),
+          content: 
+            RatingBar.builder(
+              initialRating: rating,
+              minRating: 0,
+              maxRating: 5,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 40,
+              itemPadding: const EdgeInsets.symmetric(
+                horizontal: 4.0,
+              ),
+              itemBuilder: (context, _) =>
+                  const Icon(Icons.star, color: Colors.yellow),
+              unratedColor: Colors.white,
+              onRatingUpdate: (rating) {
+                setState(() {
+                  gameScore = rating;
+                });
+              },
+            ),
+
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16)),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Salvar', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (updateRating != true) {
+      return ;
+    }
+
+    String? token = await storage.read(key: TOKEN_KEY);
+
+    try {
+      Response res = await dio.patch(
+        'http://localhost:8000/api/game/update/$gameId/$gameScore',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+          validateStatus: (status) => status != null && status < 500,
+        ),
+      );
+
+      if (res.statusCode == 204) {
+        _reloadPage();
+      }
+
+    } on DioException catch (e) {
+      throw Exception("Erro de conexão");
+    }
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +167,15 @@ class DetailsState extends State<Details> {
     }
   }
 
+  Key _futureBuilderKey = UniqueKey();
+
+  void _reloadPage() {
+    setState(() {
+      // Altera a key do FutureBuilder, que força o builder a ser executado novamente.
+      _futureBuilderKey = UniqueKey();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -106,6 +192,7 @@ class DetailsState extends State<Details> {
       ),
 
       body: FutureBuilder<Map<String, dynamic>?> (
+        key: _futureBuilderKey,
         future: _getGame(), 
         builder: (context, snapshot) {
 
@@ -194,19 +281,19 @@ class DetailsState extends State<Details> {
                                 height: 40.0,
                                 child: AspectRatio(
                                   aspectRatio: 1,
-                                  child: RatingBar.builder(
-                                    initialRating: fetchedGame["favorite"] == null ? 0 : 1,
-                                    minRating: 0,
-                                    maxRating: 1,
-                                    direction: Axis.horizontal,
-                                    itemCount: 1,
-                                    unratedColor: Colors.grey,
-                                    itemBuilder: (context, _) {
-                                      return Icon(Icons.star, color: Colors.purpleAccent);
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      double rating = fetchedGame["rating"];
+                                      int gameId = widget.gameId;
+                                      _onRating(rating, gameId);
                                     },
-                                    onRatingUpdate: (favorite) {
-                                      
-                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.deepPurpleAccent,
+                                      minimumSize: Size.zero,
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(8.0))
+                                    ),
+                                    child: Icon(Icons.star, color: Colors.white, size: 24)
                                   ),
                                 ),
                               ),
