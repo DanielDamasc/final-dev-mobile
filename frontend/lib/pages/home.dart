@@ -81,9 +81,11 @@ class _HomeState extends State<Home> {
     final token = await getToken();
     if (token == null) {
       if (mounted) {
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => Login()),
+        // Necessário para remover as rotas da pilha de navegação antes de ir para Login.
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+            (Route<dynamic> route) => false,
         );
       }
     }
@@ -108,6 +110,7 @@ class _HomeState extends State<Home> {
       if (res.statusCode == 200) {
         // Deleta o token e redireciona para o login.
         await storage.delete(key: TOKEN_KEY);
+
         _checkAuth();
       }
 

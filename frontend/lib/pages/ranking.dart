@@ -83,9 +83,11 @@ class _RankingState extends State<Ranking> {
     final token = await getToken();
     if (token == null) {
       if (mounted) {
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => Login()),
+        // Necessário para remover as rotas da pilha de navegação antes de ir para Login.
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+            (Route<dynamic> route) => false,
         );
       }
     }
