@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('description');
             $table->string('background_image');
             $table->date('released');
-            $table->boolean('favorite')->nullable(true);
 
             $table->timestamps();
         });

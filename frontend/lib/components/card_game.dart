@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/pages/details.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Cardgame extends StatefulWidget {
   final Map<String, dynamic> game;
-  final VoidCallback onDeleteSuccess;
+  final VoidCallback reloadGames;
 
-  const Cardgame({super.key, required this.game, required this.onDeleteSuccess});
+  const Cardgame({super.key, required this.game, required this.reloadGames});
 
   @override
   State<Cardgame> createState() => _CardgameState();
@@ -55,7 +56,7 @@ class _CardgameState extends State<Cardgame> {
       if (res.statusCode == 204) {
         _showSnackbar("Jogo deletado com sucesso", Colors.green);
 
-        widget.onDeleteSuccess();
+        widget.reloadGames();
       }
 
       else if (res.statusCode == 404) {
@@ -158,7 +159,16 @@ class _CardgameState extends State<Cardgame> {
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => Details(gameId: widget.game['id'])
+                              )
+                            );
+
+                            widget.reloadGames();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurpleAccent,
                             minimumSize: Size.zero,

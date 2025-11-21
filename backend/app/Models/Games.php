@@ -19,7 +19,6 @@ class Games extends Model
         "description",
         "background_image",
         "released",
-        "favorite",
     ];
 
     public function genres(): BelongsToMany {
@@ -27,6 +26,7 @@ class Games extends Model
     }
 
     public function users(): BelongsToMany {
-        return $this->belongsToMany(User::class, 'games_users', 'game_id', 'user_id');
+        return $this->belongsToMany(User::class, 'games_users', 'game_id', 'user_id')
+            ->withPivot('favorite');
     }
 }

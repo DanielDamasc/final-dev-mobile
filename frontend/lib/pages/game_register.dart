@@ -199,10 +199,7 @@ class _GameRegisterState extends State<GameRegister> {
         _showSnackbar(msg, Colors.green);
 
         if (mounted) {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context) => Home())
-          );
+          Navigator.pop(context);
         }
       } else {
         String detailedError = 'Erro: ${res.statusCode}.';

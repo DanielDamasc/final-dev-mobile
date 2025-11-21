@@ -157,7 +157,13 @@ class ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true, 
-        title: Text("Perfil", style: TextStyle(color: Colors.white))
+        title: Text("Perfil", style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.white)
+        ),
       ),
 
       body: FutureBuilder<Map<String, dynamic>?>(

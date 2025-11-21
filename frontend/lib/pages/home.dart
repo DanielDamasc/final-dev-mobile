@@ -88,6 +88,33 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> _logout() async {
+
+    String? token = await storage.read(key: TOKEN_KEY);
+
+    try {
+      Response res = await dio.post(
+        'http://localhost:8000/api/logout',
+        options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+            validateStatus: (status) => status != null && status < 500,
+          ),
+      );
+
+      if (res.statusCode == 200) {
+        // Deleta o token e redireciona para o login.
+        await storage.delete(key: TOKEN_KEY);
+        _checkAuth();
+      }
+
+    } on DioException catch (e) {
+      throw Exception("Erro de conexão");
+    }
+  }
+
   Key _futureBuilderKey = UniqueKey();
 
   void _reloadGames() {
@@ -104,10 +131,16 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("Home", style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          onPressed: () {
+            _logout();
+          },
+          icon: Icon(Icons.logout, color: Colors.white)
+        ),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => Profile())
               );
@@ -168,7 +201,7 @@ class _HomeState extends State<Home> {
                       children: [
                         Cardgame(
                           game: game,
-                          onDeleteSuccess: _reloadGames,  
+                          reloadGames: _reloadGames,  
                         ),
                         SizedBox(height: 24),
                       ],
@@ -184,11 +217,13 @@ class _HomeState extends State<Home> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context, 
             MaterialPageRoute(builder: (context) => GameRegister()),
           );
+
+          _reloadGames();
         },
         backgroundColor: Colors.green,
         child: Icon(Icons.add, color: Colors.white),

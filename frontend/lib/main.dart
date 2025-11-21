@@ -1,5 +1,3 @@
-import 'package:final_mobile/pages/details.dart';
-import 'package:final_mobile/pages/favs.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
 
@@ -24,8 +22,6 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const Login(),
-        '/datails': (context) => const Details(game: {}),
-        '/favs': (context) => const Favs(),
       },
     );
   }

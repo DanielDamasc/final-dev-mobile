@@ -101,9 +101,49 @@ class GamesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Games $games)
+    public function show(int $gameId)
     {
-        //
+        $user = auth()->user();
+
+        try {
+            // Carrega a relação mas pega somente o user autenticado, para depois buscar o atributo da pivot.
+            $game = Games::where('rawg_id', $gameId)
+                ->whereAttachedTo($user, 'users')
+                ->with(['users' => function($query) use ($user) {
+                    $query->where('id', $user->id);
+                }, 'genres'])
+                ->firstOrFail();
+
+            // Consegue acessar o atributo diretamente por ter carregado a relação antes.
+            $favorite = $game->users->first()->pivot->rating;
+
+            $genreData = $game->genres->map(function ($genre) {
+                return $genre->name;
+            });
+
+            $gameData = [
+                'rawg_id' => $game->rawg_id,
+                'name' => $game->name,
+                'description' => $game->description,
+                'background_image' => $game->background_image,
+                'released' => $game->released,
+                'favorite' => $favorite,
+                'genres' => $genreData
+            ];
+
+            return response()->json($gameData);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                "message" => "Jogo não encontrado."
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Erro de conexão."
+            ], 500);
+        }
+
     }
 
     /**
