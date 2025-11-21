@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/details.dart';
-import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Cardgame extends StatefulWidget {
   final Map<String, dynamic> game;
@@ -17,38 +16,22 @@ class Cardgame extends StatefulWidget {
 class _CardgameState extends State<Cardgame> {
 
   final dio = Dio();
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
+  final ApiService _apiService = ApiService();
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
   
   Future<void> _deleteGame() async {
     final int gameId = widget.game['id'];
 
-    String? token = await storage.read(key: TOKEN_KEY);
+    final headers = await _apiService.getAuthHeaders();
 
     try {
       Response res = await dio.delete(
-        'http://localhost:8000/api/game/delete/$gameId',
+        '${_apiService.BASE_URL}/game/delete/$gameId',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
