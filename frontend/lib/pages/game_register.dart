@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:final_mobile/pages/home.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GameRegister extends StatefulWidget {
   const GameRegister({super.key});
@@ -17,9 +16,7 @@ class _GameRegisterState extends State<GameRegister> {
   final String apiKey = 'f6c09fc6667947218a853f3cfa386bcf';
   bool isLoading = false;
 
-  // Recuperar o token.
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
+  final ApiService _apiService = ApiService();
 
   final TextEditingController idCtrl = TextEditingController();
   final TextEditingController nameCtrl = TextEditingController();
@@ -126,19 +123,7 @@ class _GameRegisterState extends State<GameRegister> {
   }
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
 
   void _showSnackbar(String message, Color color) {
@@ -155,8 +140,7 @@ class _GameRegisterState extends State<GameRegister> {
 
   Future<void> _onGameRegister() async {
 
-    // Recebe o token.
-    final token = await getToken();
+    final headers = await _apiService.getAuthHeaders();
 
     // Mensagem da SnackBar.
     String msg;
@@ -177,7 +161,7 @@ class _GameRegisterState extends State<GameRegister> {
 
     try {
       res = await dio.post(
-        'http://localhost:8000/api/gameRegister',
+        '${_apiService.BASE_URL}/gameRegister',
         data: {
           "rawg_id": int.parse(idCtrl.text),
           "name": nameCtrl.text,
@@ -187,10 +171,7 @@ class _GameRegisterState extends State<GameRegister> {
           "genres": genreNames,
         },
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
+          headers: headers
         ),
       );
 

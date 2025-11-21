@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Details extends StatefulWidget {
   final int gameId;
@@ -15,39 +15,24 @@ class Details extends StatefulWidget {
 class DetailsState extends State<Details> {
 
   final dio = Dio();
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
+  final ApiService _apiService = ApiService();
+  
   double? gameScore;
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
 
   Future<Map<String, dynamic>?> _getGame() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
     int gameId = widget.gameId;
 
     try {
+      final headers = await _apiService.getAuthHeaders();
       Response res = await dio.get(
-        'http://localhost:8000/api/game/$gameId',
+        '${_apiService.BASE_URL}/game/$gameId',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
@@ -122,16 +107,12 @@ class DetailsState extends State<Details> {
       return ;
     }
 
-    String? token = await storage.read(key: TOKEN_KEY);
-
     try {
+      final headers = await _apiService.getAuthHeaders();
       Response res = await dio.patch(
-        'http://localhost:8000/api/game/update/$gameId/$gameScore',
+        '${_apiService.BASE_URL}/game/update/$gameId/$gameScore',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
+          headers: headers,
           validateStatus: (status) => status != null && status < 500,
         ),
       );

@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/components/card_game.dart';
 import 'package:final_mobile/pages/game_register.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:final_mobile/pages/profile.dart';
 import 'package:final_mobile/pages/ranking.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,38 +16,21 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final ApiService _apiService = ApiService();
   final dio = Dio();
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
 
   Future<List<Map<String, dynamic>>?> _getGames() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
-
     try {
+      final headers = await _apiService.getAuthHeaders();
       Response res = await dio.get(
-        'http://localhost:8000/api/games',
+        '${_apiService.BASE_URL}/games',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
@@ -93,23 +76,19 @@ class _HomeState extends State<Home> {
 
   Future<void> _logout() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
-
     try {
+      final headers = await _apiService.getAuthHeaders();
       Response res = await dio.post(
-        'http://localhost:8000/api/logout',
+        '${_apiService.BASE_URL}/logout',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
 
       if (res.statusCode == 200) {
         // Deleta o token e redireciona para o login.
-        await storage.delete(key: TOKEN_KEY);
+        await _apiService.deleteToken();
 
         _checkAuth();
       }

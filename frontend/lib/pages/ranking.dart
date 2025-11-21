@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Ranking extends StatefulWidget {
   const Ranking({super.key});
@@ -13,37 +13,21 @@ class Ranking extends StatefulWidget {
 class _RankingState extends State<Ranking> {
 
   final dio = Dio();
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
+  final ApiService _apiService = ApiService();
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
 
   Future<List<Map<String, dynamic>>?> _buildRanking() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
+    final headers = await _apiService.getAuthHeaders();
 
     try {
       Response res = await dio.get(
-        'http://localhost:8000/api/ranking',
+        '${_apiService.BASE_URL}/ranking',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -13,37 +13,21 @@ class Profile extends StatefulWidget {
 class ProfileState extends State<Profile> {
   
   final dio = Dio();
-  final storage = FlutterSecureStorage();
-  final String TOKEN_KEY = 'auth_token';
+  final ApiService _apiService = ApiService();
 
   Future<String?> getToken() async {
-    try {
-      String? token = await storage.read(key: TOKEN_KEY);
-      
-      if (token == null) {
-        return null;
-      }
-      return token;
-
-    } catch (e) {
-
-      print('Erro ao recuperar token: $e');
-      return null;
-    }
+    return _apiService.getToken();
   }
 
   Future<Map<String, dynamic>?> _getUser() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
+    final headers = await _apiService.getAuthHeaders();
 
     try {
       Response res = await dio.get(
-        'http://localhost:8000/api/user',
+        '${_apiService.BASE_URL}/user',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
@@ -76,23 +60,20 @@ class ProfileState extends State<Profile> {
 
   Future<void> _logout() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
+    final headers = await _apiService.getAuthHeaders();
 
     try {
       Response res = await dio.post(
-        'http://localhost:8000/api/logout',
+        '${_apiService.BASE_URL}/logout',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
 
       if (res.statusCode == 200) {
         // Deleta o token e redireciona para o login.
-        await storage.delete(key: TOKEN_KEY);
+        await _apiService.deleteToken();
         _checkAuth();
         _showSnackbar(res.data["message"].toString(), Colors.green);
       }
@@ -105,22 +86,19 @@ class ProfileState extends State<Profile> {
 
   Future<void> _deleteUser() async {
 
-    String? token = await storage.read(key: TOKEN_KEY);
+    final headers = await _apiService.getAuthHeaders();
 
     try {
       Response res = await dio.delete(
-        'http://localhost:8000/api/user/delete',
+        '${_apiService.BASE_URL}/user/delete',
         options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: headers,
             validateStatus: (status) => status != null && status < 500,
           ),
       );
 
       if (res.statusCode == 204) {
-        await storage.delete(key: TOKEN_KEY);
+        await _apiService.deleteToken();
         _checkAuth();
         _showSnackbar("Conta deletada com sucesso", Colors.green);
       }
