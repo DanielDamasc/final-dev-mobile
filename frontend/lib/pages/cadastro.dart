@@ -89,16 +89,18 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
 
+    const Color primaryPurple = Colors.deepPurpleAccent;
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
 
       child: Scaffold(
+        backgroundColor: Color.fromARGB(255, 10, 10, 10),
 
         appBar: AppBar(
-          centerTitle: true,
-          title: Text("Cadastro", style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
@@ -106,22 +108,27 @@ class _RegisterState extends State<Register> {
         ),
 
         body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 8.0),
           child: Container(
             constraints: BoxConstraints(
               minHeight:
                   MediaQuery.of(context).size.height -
-                  (kToolbarHeight + MediaQuery.of(context).padding.top),
+                  (kToolbarHeight + MediaQuery.of(context).padding.top + 16),
             ),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 10, 10, 10),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Icon(
+                  Icons.account_circle_outlined,
+                  color: primaryPurple,
+                  size: 80,
+                ),
+
+                SizedBox(height: 20),
+
                 Text(
                   "Crie sua Conta",
-                  style: TextStyle(fontSize: 28, color: Colors.purple),
+                  style: TextStyle(fontSize: 28, color: primaryPurple, fontWeight: FontWeight.bold),
                 ),
 
                 SizedBox(height: 20),
@@ -129,35 +136,68 @@ class _RegisterState extends State<Register> {
                 Column(
                   children: [
                     TextField(
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                       controller: nomeCtrl,
                       decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person, color: primaryPurple),
                         hintText: 'Nome',
-                        hintStyle: TextStyle(color: Colors.deepPurple),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: primaryPurple, width: 2.0)
+                        )
                       ),
                     ),
                     
                     SizedBox(height: 20),
 
                     TextField(
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                       controller: emailCtrl,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email_outlined, color: primaryPurple),
                         hintText: 'E-mail',
-                        hintStyle: TextStyle(color: Colors.deepPurple),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: primaryPurple, width: 2.0)
+                        )
                       ),
                     ),
 
                     SizedBox(height: 20),
 
                     TextField(
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                       controller: senhaCtrl,
                       obscureText: escondeSenha,
                       decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock_outline, color: primaryPurple),
                         hintText: 'Senha',
-                        hintStyle: TextStyle(color: Colors.deepPurple),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: primaryPurple, width: 2.0)
+                        ),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -167,7 +207,7 @@ class _RegisterState extends State<Register> {
 
                           icon: Icon(
                             escondeSenha ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.grey,
+                            color: primaryPurple,
                           ),
                         ),
                       ),
@@ -176,34 +216,53 @@ class _RegisterState extends State<Register> {
                     SizedBox(height: 20),
 
                     TextField(
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                       controller: confirmarSenhaCtrl,
                       obscureText: true,
                       decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock_outline, color: primaryPurple),
                         hintText: 'Confirmar Senha',
-                        hintStyle: TextStyle(color: Colors.deepPurple),
+                        hintStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: primaryPurple, width: 2.0)
+                        )
                       ),
                     ),
 
                     SizedBox(height: 20),
 
                     if (errorMessage.isNotEmpty)
-                      Text(
-                        errorMessage,
-                        style: TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Text(
+                          errorMessage,
+                          style: TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
 
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent,
+                        backgroundColor: primaryPurple,
                         foregroundColor: Colors.white,
                         minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 5,
                       ),
+
                       onPressed: _onCadastrar,
                       child: isLoading
                           ? CircularProgressIndicator(color: Colors.white)
-                          : Text('Cadastrar'),
+                          : Text('Cadastrar', style: TextStyle(fontSize: 16)),
                     ),
 
                     SizedBox(height: 20),
@@ -220,7 +279,7 @@ class _RegisterState extends State<Register> {
                             TextSpan(
                               text: 'Faça login.',
                               style: TextStyle(
-                                color: Colors.deepPurpleAccent,
+                                color: primaryPurple,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

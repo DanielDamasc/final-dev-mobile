@@ -22,14 +22,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-  - assets/images/game1.jpg
-  - assets/images/game2.jpg
-  - assets/images/game3.jpg
-  - assets/images/game4.jpg
-  - assets/images/game5.jpg
-  - assets/images/game6.jpg
-  - assets/images/game7.jpg
-  - assets/images/game8.jpg
-  - assets/images/game9.jpg
-  - assets/images/game10.jpg
