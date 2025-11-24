@@ -66,7 +66,7 @@ class User extends Authenticatable
                     return Storage::disk('public')->url($path);
                 }
 
-                return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random';
+                return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&format=png';
             }
         );
     }

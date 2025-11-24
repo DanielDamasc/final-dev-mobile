@@ -207,7 +207,7 @@ class ProfileState extends State<Profile> {
                           radius: 50,
                           backgroundColor: Colors.deepPurpleAccent,
                           backgroundImage: fotoUrl.isNotEmpty
-                              ? NetworkImage(fotoUrl) as ImageProvider<Object>?
+                              ? NetworkImage(fotoUrl)
                               : null, 
                           
                           child: fotoUrl.isEmpty
