@@ -203,19 +203,20 @@ class ProfileState extends State<Profile> {
                     Row(
                       children: [
 
-                        ClipOval(
-                          child: fotoUrl.isNotEmpty
-                            ? Image.network(
-                                fotoUrl,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              )
-                            : Icon(
-                                Icons.account_circle,
-                                color: Colors.deepPurple,
-                                size: 100,
-                              ),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.deepPurpleAccent,
+                          backgroundImage: fotoUrl.isNotEmpty
+                              ? NetworkImage(fotoUrl) as ImageProvider<Object>?
+                              : null, 
+                          
+                          child: fotoUrl.isEmpty
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.white,
+                                )
+                              : null,
                         ),
 
                         SizedBox(width: 20),
@@ -297,4 +298,4 @@ class ProfileState extends State<Profile> {
       ),
     );
   }
-}
+} 

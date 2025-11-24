@@ -42,14 +42,14 @@ class AuthController extends Controller
 
             DB::beginTransaction();
 
-            // $caminho = null;
-            // if ($request->hasFile('foto')) {
-            //     $caminho = $request->file('foto')->store('fotos', 'public');
-            // }
+            $caminho = null;
+            if ($request->hasFile('foto')) {
+                $caminho = $request->file('foto')->store('fotos', 'public');
+            }
 
             $user = User::create([
                 'name' => $request->name,
-                // 'foto' => $caminho,
+                'foto' => $caminho,
                 'email' => $request->email,
                 'password'=> Hash::make($request->password),
             ]);

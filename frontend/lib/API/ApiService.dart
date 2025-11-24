@@ -1,10 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
 
   // Variáveis Básicas
   final storage = FlutterSecureStorage();
-  final String BASE_URL = 'http://localhost:8000/api';
+  final String? BASE_URL = dotenv.env["BASE_URL"];
   final String TOKEN_KEY = 'auth_token';
 
   // Retorna o token do usuário autenticado.

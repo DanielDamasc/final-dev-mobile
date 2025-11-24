@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:final_mobile/API/ApiService.dart';
 import 'package:final_mobile/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GameRegister extends StatefulWidget {
   const GameRegister({super.key});
@@ -13,7 +14,7 @@ class GameRegister extends StatefulWidget {
 class _GameRegisterState extends State<GameRegister> {
 
   final dio = Dio();
-  final String apiKey = 'f6c09fc6667947218a853f3cfa386bcf';
+  final String? apiKey = dotenv.env["API_KEY"];
   bool isLoading = false;
 
   final ApiService _apiService = ApiService();

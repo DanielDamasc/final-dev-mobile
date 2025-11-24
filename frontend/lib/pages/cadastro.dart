@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:final_mobile/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -14,12 +16,16 @@ class _RegisterState extends State<Register> {
 
   final dio = Dio();
   final storageToken = const FlutterSecureStorage();
+  final ImagePicker picker = ImagePicker();
+  final String? BASE_URL = dotenv.env["BASE_URL"];
 
   // Controllers
   final TextEditingController nomeCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController senhaCtrl = TextEditingController();
   final TextEditingController confirmarSenhaCtrl = TextEditingController();
+  XFile? imageFile;
+
 
   bool escondeSenha = true;
   String errorMessage = '';
@@ -35,6 +41,18 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        imageFile = pickedFile;
+      });
+    }
+  }
+
   Future<void> _onCadastrar() async {
 
     setState(() {
@@ -43,14 +61,27 @@ class _RegisterState extends State<Register> {
     });
 
     try {
-      Response res = await dio.post('http://localhost:8000/api/register',
-        data: {
-          "name": nomeCtrl.text,
-          "foto": null,
-          "email": emailCtrl.text,
-          "password": senhaCtrl.text,
-          "password_confirmation": confirmarSenhaCtrl.text,
-        },
+      Map<String, dynamic> data = {
+        "name": nomeCtrl.text,
+        "foto": null,
+        "email": emailCtrl.text,
+        "password": senhaCtrl.text,
+        "password_confirmation": confirmarSenhaCtrl.text,
+      };
+
+      if (imageFile != null) {
+        final bytes = await imageFile!.readAsBytes();
+
+        data["foto"] = MultipartFile.fromBytes(
+          bytes,
+          filename: imageFile!.path.split('/').last,
+        );
+      }
+
+      FormData formData = FormData.fromMap(data);
+
+      Response res = await dio.post('$BASE_URL/register',
+        data: formData,
         options: Options(
           headers: {'Accept': 'application/json'},
           validateStatus: (status) => status != null && status < 500,
@@ -118,10 +149,43 @@ class _RegisterState extends State<Register> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.account_circle_outlined,
-                  color: primaryPurple,
-                  size: 80,
+
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: primaryPurple,
+
+                    child: imageFile == null
+                        ? 
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Adicionar Foto...", style: TextStyle(fontSize: 12, color: Colors.grey.shade300)),
+                              Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 50,
+                              ),
+                            ],
+                          )
+                        : FutureBuilder (
+                          future: imageFile!.readAsBytes(), 
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                              return ClipOval(
+                                child: Image.memory(
+                                  snapshot.data!,
+                                  fit: BoxFit.cover,
+                                  width: 120,
+                                  height: 120,
+                                ),
+                              );
+                            }
+                            return CircularProgressIndicator(color: Colors.white);
+                          }
+                        ),
+                  ),
                 ),
 
                 SizedBox(height: 20),

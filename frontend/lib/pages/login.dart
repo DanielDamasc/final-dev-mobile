@@ -2,6 +2,7 @@ import 'package:final_mobile/pages/cadastro.dart';
 import 'package:final_mobile/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -16,6 +17,7 @@ class _LoginState extends State<Login> {
 
   final dio = Dio();
   final storageToken = const FlutterSecureStorage();
+  final String? BASE_URL = dotenv.env["BASE_URL"];
 
   TextEditingController emailCtrl = TextEditingController();
   TextEditingController senhaCtrl = TextEditingController();
@@ -42,7 +44,7 @@ class _LoginState extends State<Login> {
 
       Response res;
 
-      res = await dio.post('http://localhost:8000/api/login',
+      res = await dio.post('$BASE_URL/login',
        data: {
         'email': emailCtrl.text, 
         'password': senhaCtrl.text
