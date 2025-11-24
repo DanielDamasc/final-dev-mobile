@@ -16,8 +16,6 @@ class DetailsState extends State<Details> {
 
   final dio = Dio();
   final ApiService _apiService = ApiService();
-  
-  double? gameScore;
 
   Future<String?> getToken() async {
     return _apiService.getToken();
@@ -57,6 +55,8 @@ class DetailsState extends State<Details> {
 
   Future<void> _onRating(double rating, int gameId) async {
 
+    double newRating = rating;
+
     final bool? updateRating = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -65,7 +65,7 @@ class DetailsState extends State<Details> {
           title: const Text('Avaliar Jogo', style: TextStyle(color: Colors.white)),
           content: 
             RatingBar.builder(
-              initialRating: rating,
+              initialRating: newRating,
               minRating: 0,
               maxRating: 5,
               direction: Axis.horizontal,
@@ -80,7 +80,7 @@ class DetailsState extends State<Details> {
               unratedColor: Colors.white,
               onRatingUpdate: (rating) {
                 setState(() {
-                  gameScore = rating;
+                  newRating = rating;
                 });
               },
             ),
@@ -107,10 +107,14 @@ class DetailsState extends State<Details> {
       return ;
     }
 
+    // if (newRating == 0) {
+    //   return ;
+    // }
+
     try {
       final headers = await _apiService.getAuthHeaders();
       Response res = await dio.patch(
-        '${_apiService.BASE_URL}/game/update/$gameId/$gameScore',
+        '${_apiService.BASE_URL}/game/update/$gameId/$newRating',
         options: Options(
           headers: headers,
           validateStatus: (status) => status != null && status < 500,
@@ -272,7 +276,7 @@ class DetailsState extends State<Details> {
                                   aspectRatio: 1,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      double rating = fetchedGame["rating"];
+                                      double rating = (fetchedGame["rating"] as num).toDouble();
                                       int gameId = widget.gameId;
                                       _onRating(rating, gameId);
                                     },

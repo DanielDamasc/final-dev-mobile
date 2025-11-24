@@ -165,7 +165,7 @@ class _RankingState extends State<Ranking> {
                         final game = fetchedRanking[index];
                         final int position = game["position"];
                         final String name = game["name"];
-                        final double rating = game["rating"];
+                        final double rating = (game["rating"] as num).toDouble();
                     
                         return ListTile(
                           minTileHeight: 80,
